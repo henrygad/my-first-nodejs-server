@@ -74,7 +74,7 @@ router.post('/signup',
 
             await usersData.create({ userName: createNewUser.userName, email: createNewUser.email, timeline: [createNewUser.userName] }) // create a new user space for each new user
 
-            const token = jwt.sign({ _id: createNewUser._id }, SECRETE, { expiresIn: '2h' }) // generate authentication token and assign it to user
+            const token = jwt.sign({ _id: createNewUser._id }, SECRETE, { expiresIn: '24h' }) // generate authentication token and assign it to user
             req.session.jwtToken = token // attach authentication  token to req property
             req.session.isLogin = req.session.jwtToken ? true : false // login user
 
@@ -92,7 +92,7 @@ router.post('/signup',
             })
 
             req.session.emailVerificationToken = null // clear up any avaliable email verification OTP token
-            const jwtEmailOTPToken = jwt.sign({ emailOTP }, SECRETE, { expiresIn: '1h' }) // assign new one
+            const jwtEmailOTPToken = jwt.sign({ emailOTP }, SECRETE, { expiresIn: '24h' }) // assign new one
             req.session.emailVerificationToken = jwtEmailOTPToken //  attached the new email verification OTP token to the req session object
 
             const isLogin = req.session.isLogin
@@ -134,15 +134,11 @@ router.post('/login',
             const validPassword = bcypt.compareSync(password, userExist.password) // compare raw password with hashed password
             if (!validPassword) throw new Error('Invalid credentials!') // if password is not valid
 
-            if (req.session.jwtTokenExpired) {
-                const token = jwt.sign({ _id: userExist._id }, SECRETE, { expiresIn: '2h' }) // generate authentication token and assign it to user
-                req.session.jwtToken = token // attach authentication  token to req property
-                req.session.isLogin = req.session.jwtToken ? true : false // login user
-            } else {
-                req.session.isLogin = true // login user 
-            }
-            
+            const token = jwt.sign({ _id: userExist._id }, SECRETE, { expiresIn: '24h' }) // generate authentication token and assign it to user
+            req.session.jwtToken = token // attach authentication  token to req property
+            req.session.isLogin = req.session.jwtToken ? true : false // login user
             const isLogin = req.session.isLogin // get login  status
+
             res.json({ //send back athorizetion
                 greetings: `Hi! ${userExist.userName}`,
                 isLogin,

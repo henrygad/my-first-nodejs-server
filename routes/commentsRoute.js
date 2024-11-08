@@ -9,7 +9,7 @@ router.get('/comments', async (req, res, next) => {
     const { query: { skip = 0, limit = 0 } } = req
 
     try {
-
+        
         const comments = await commentsData  // get all comments
             .find()
             .sort({ createdAt: -1 })
