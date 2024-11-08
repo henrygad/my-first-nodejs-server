@@ -12,18 +12,17 @@ const app = express()
 const PORT = process.env.PORT || 4000
 const DBURI = process.env.DBURI
 const SECRETE = process.env.SECRETE
-
 const oneHour = 3600000
-const corsOptions = {
-    //origin: 'http://localhost:5173',
-    //methods: ['GET'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
-    exposedHeaders: ['X-Custom-Header'],
-    credentials: true,
-}
 
 // Middlewares
-app.use(cors(corsOptions))
+app.use(cors(
+    {
+        origin: 'http://localhost:5173', // Specify the exact origin or use a variable if deploying
+        credentials: true, // allow credentials (cookies) to be sent
+        //allowedHeaders: ['Content-Type', 'Authorization'],
+        //exposedHeaders: ['X-Custom-Header'],
+    }
+))
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ limit: '10mb', extended: true }));
 Mongoose.set('strictQuery', false)
@@ -38,16 +37,16 @@ Mongoose.connect(DBURI)
             cookie: {
                 expires: new Date(Date.now() + (oneHour * 24)), // expires in 25hrs from now
                 maxAge: (oneHour * 24), // live for 24hrs
-                httpOnly: true, // Prevents JavaScript access
-                secure: true,   // Ensures cookie is sent over HTTPS
-                sameSite: 'None', // Required for cross-site cookies
+                httpOnly: true, // Prevents client-side access for security
+                secure: false, // Ensures cookies are sent over HTTPS
+                sameSite: 'lax' // For cross-origin request (to sent cookies to a different domain)
             },
             store: MongoStore.create({
                 client: Mongoose.connection.getClient()
             })
         }))
 
-        app.get('/api', (req, res) => {
+        app.get('/', (req, res) => {
             const { session } = req
             session.visited = true // modified session
 

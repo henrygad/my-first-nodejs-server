@@ -28,7 +28,7 @@ const authorization = async (req, res, next) => {
             }
         }
 
-        req.session.jwtTokenExpired = false // jwst has not expires yet
+        //req.session.jwtTokenExpired = false // jwst has not expires yet
         if (jwtToken && !isLogin) throw new Error('Unauthorized, you are log out') // user is logout
 
         const authenticateUser = await authenticatedUsers.findById(decoded?._id) // check if this user is a valid user
