@@ -134,7 +134,7 @@ router.post('/login',
             const validPassword = bcypt.compareSync(password, userExist.password) // compare raw password with hashed password
             if (!validPassword) throw new Error('Invalid credentials!') // if password is not valid
 
-            if (session.jwtTokenExpired) {
+            if (req.session.jwtTokenExpired) {
                 const token = jwt.sign({ _id: userExist._id }, SECRETE, { expiresIn: '2h' }) // generate authentication token and assign it to user
                 req.session.jwtToken = token // attach authentication  token to req property
                 req.session.isLogin = req.session.jwtToken ? true : false // login user

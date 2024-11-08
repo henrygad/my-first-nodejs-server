@@ -10,7 +10,7 @@ const authorization = async (req, res, next) => {
 
     try {
 
-        if (!jwtToken) {
+        if (!jwtToken?.trim()) {
             req.session.jwtTokenExpired = true // jwst tokon is properly expire
             throw new Error('Unauthorized, no token provided!') // check if jwtToken is provided
         }
