@@ -12,6 +12,7 @@ const app = express()
 const PORT = process.env.PORT || 4000
 const DBURI = process.env.DBURI
 const SECRETE = process.env.SECRETE
+
 const oneHour = 3600000
 const corsOptions = {
     //origin: 'http://localhost:5173',
@@ -38,8 +39,8 @@ Mongoose.connect(DBURI)
                 expires: new Date(Date.now() + (oneHour * 24)), // expires in 25hrs from now
                 maxAge: (oneHour * 24), // live for 24hrs
                 httpOnly: true, // Prevents JavaScript access
-                secure: false,   // Ensures cookie is sent over HTTPS
-                //sameSite: 'None',
+                secure: true,   // Ensures cookie is sent over HTTPS
+                sameSite: 'None', // Required for cross-site cookies
             },
             store: MongoStore.create({
                 client: Mongoose.connection.getClient()
