@@ -1,0 +1,33 @@
+{
+  "name": "bloggers-back-end",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon server.js",
+    "start": "node server.js",
+    "build": "node server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "connect-mongo": "^5.1.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "express-session": "^1.18.0",
+    "express-validator": "^7.2.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.4.4",
+    "multer": "^1.4.4",
+    "nodemailer": "^6.9.16",
+    "validator": "^13.12.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.4"
+  },
+  "type": "commonjs"
+}
