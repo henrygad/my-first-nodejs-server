@@ -108,7 +108,7 @@ router.post('/signup',
 
             next(new customError(error, 500))
         }
-    })
+})
 
 router.post('/login',
     [
@@ -151,7 +151,7 @@ router.post('/login',
 
             next(new customError(error, 400))
         }
-    })
+})
 
 router.post('/logout', authorization, async (req, res, next) => {
     const { authorizeUser, session } = req
@@ -235,7 +235,7 @@ router.post('/verifyemail',
 
             next(new customError(error, 400))
         }
-    })
+})
 
 router.patch('/changeforgetpassword/:jwtTokenFor30min', async (req, res, next) => {
     const { params: { jwtTonkenFor30min } } = req
