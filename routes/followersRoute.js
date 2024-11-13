@@ -3,18 +3,18 @@ const authorization = require('../middlewares/authorization')
 const { customError } = require('../middlewares/error')
 const usersData = require('../schema/usersDataSchema')
 
-router.get('/followers', authorization, async (req, res, next)=>{
+router.get('/followers', authorization, async (req, res, next) => {
     const { authorizeUser } = req
 
     try {
 
-        const getUser = await usersData.findOne({userName: authorizeUser}) // get user
-        if(!getUser) throw new Error('Bad request: no user was found!') // error if user not found
-        
-         res.json({followers: getUser.followers})
+        const getUser = await usersData.findOne({ userName: authorizeUser }) // get user
+        if (!getUser) throw new Error('Bad request: no user was found!') // error if user not found
+
+        res.json({ followers: getUser.followers })
 
     } catch (error) {
-        
+
         next(new customError(error, 400))
     }
 })
@@ -77,12 +77,12 @@ router.patch('/unfollow/:userToUnfollow', authorization, async (req, res, next) 
         if (!unFollowed.followers) throw new Error('Bad request: user not followed')
 
         // delete the user to unfollow from the login user following 
-        const removeFollowing = await usersData.findOneAndUpdate({ userName: authorizeUser },
+        await usersData.findOneAndUpdate({ userName: authorizeUser },
             { $pull: { following: unFollowed.userName, timeline: unFollowed.userName } },
-            {new: true})
+            { new: true })
 
         res.json({ unFollowed: userToUnfollow })
-        
+
     } catch (error) {
 
         next(new customError(error, 400))

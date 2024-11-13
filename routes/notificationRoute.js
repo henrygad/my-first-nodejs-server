@@ -84,7 +84,8 @@ router.patch('/notification/viewed/:_id', authorization, async (req, res, next) 
         )
         if (!updataNotification.notifications) throw new Error('Bad request: notificaton was not updated!')
 
-        res.json({ notification: updataNotification.notifications.find(item => item._id === _id) })
+        const notification = updataNotification.notifications.find(item => item._id === _id)
+        res.json({ notification })
 
     } catch (error) {
 
