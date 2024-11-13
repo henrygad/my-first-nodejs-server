@@ -95,10 +95,10 @@ router.post('/addcomment', [
         .notEmpty().withMessage('blogpostId field must not be empty')
         .isString().withMessage('blogpostId must be a string'),
 
-    body(['parentUrl', 'parentId', 'body._html', 'body.text', 'children.*', 'commentIsAReplyTo.*', 'likes.*', 'shares.*'])
+    body(['parentUrl', 'body._html', 'body.text', 'children.*', 'commentIsAReplyTo.*', 'likes.*', 'shares.*'])
         .optional()
         .trim()
-        .isString().withMessage("parentUrl, body._html, body.text, and parentId must be a string data type"),
+        .isString().withMessage("parentUrl, body._html, body.text must be a string data type"),
 ], authorization, async (req, res, next) => {
     const { authorizeUser, body: { blogpostId, parentId, parentUrl, children, body, commentIsAReplyTo, likes, shares } } = req
 
@@ -121,7 +121,7 @@ router.post('/addcomment', [
             await commentsData.findByIdAndUpdate({ _id: parentId }, {
                 $push: { children: addComment._id }
             })
-        }
+        };
 
         res.json(addComment)
     } catch (error) {
