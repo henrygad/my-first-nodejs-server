@@ -54,7 +54,7 @@ router.get('/comments/blogpost/:blogpostId', async (req, res, next) => {
         if (!mongoose.Types.ObjectId.isValid(blogpostId)) throw new Error('Not Found: invalid blogpost id') // verify blogpost id
 
         const comment = await commentsData   // get all blogpost releted comments
-            .find({ parentId, blogpostId })
+            .find({  blogpostId, parentId })
             .skip(skip)
             .limit(limit)
         if (!comment) throw new Error('Not Found: no comment was found') // error if no comment found

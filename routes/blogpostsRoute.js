@@ -221,7 +221,7 @@ router.post('/addblogpost',
             next(new customError(error, 400))
         }
     })
-
+    
 router.patch('/editblogpost/:_id',
     [body(['displayImage', 'title', 'body', 'catigory', 'status', '_html.title', '_html.body'])
         .optional()
@@ -358,7 +358,7 @@ router.get('/blogpost/share/:_id', authorization, async (req, res, next) => {
     }
 })
 
-router.patch('/blogposts/share/:_id', async (req, res, next) => {
+router.patch('/blogpost/share/:_id', async (req, res, next) => {
     const { params: { _id }, session } = req
 
     try {

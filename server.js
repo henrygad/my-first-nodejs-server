@@ -21,23 +21,22 @@ const oneHour = 3600000
 // Middlewares
 if (process.env.NODE_ENV === 'production') {
     app.set('trust proxy', 1) // needed for sending secure cookies from host servers
+    
+    app.use((req, res, next) => {
+        if (req.headers['x-forwarded-proto'] !== 'https') { // if req headers is not https req
+            return res.redirect(`https://${req.headers.host}${req.url}`) // redirect to https
+        }
+    
+        next() // continue if https
+    })
 }
 
-app.use((req, res, next) => {
-    if (req.headers['x-forwarded-proto'] !== 'https') { // if req headers is not https req
-        return res.redirect(`https://${req.headers.host}${req.url}`) // redirect to https
-    }
-
-    next() // continue if https
-})
-
 app.use(cors({
-    origin: 'https://localhost:5173',
+    origin: ['https://localhost:5173', 'https://localhost:4173'],
     credentials: true // send cookies to cross-orgin request resourse
 }))
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ limit: '10mb', extended: true }));
-
 
 Mongoose.connect(DBURI) // connect DB
     .then(() => {
@@ -50,9 +49,9 @@ Mongoose.connect(DBURI) // connect DB
             cookie: {
                 expires: new Date(Date.now() + (oneHour * 24 * 7)), // expires in 25hrs from now
                 maxAge: (oneHour * 24 * 7), // live for 24hrs
-                httpOnly: true, // Prevents client-side access for security
-                secure: true, // Ensures cookies are sent over HTTPS
-                sameSite: 'None' // For cross-origin request (to sent cookies to a different domain)
+                httpOnly: true, // prevents client-side access for security
+                secure: true, // ensures cookies are sent over HTTPS
+                sameSite: 'None' // for cross-origin request (to sent cookies to a different domain)
             },
             store: MongoStore.create({
                 client: Mongoose.connection.getClient() // save session to DB store

@@ -17,10 +17,10 @@ router.get('/users', async (req, res, next) => {// all users
             .limit(limit)
             .select('userName name displayImage')
 
-        if (!users) throw new Error('Not Found: no user found')
+        if (!users.length) throw new Error('Not Found: no user found')
 
         res.json(users)
-
+ 
     } catch (error) {
 
         next(new customError(error, 404))

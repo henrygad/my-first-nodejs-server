@@ -19,7 +19,7 @@ const createimage = async (req, res, next) => {
             if (!addImage) throw new Error('bad request: image not save')
             req.image = addImage // assign image to request object
         }
-
+        
         next()
         
     } catch (error) {

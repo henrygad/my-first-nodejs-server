@@ -8,7 +8,6 @@ const multer = require('multer')
 
 const storage = multer.memoryStorage()
 const upload = multer({ storage })
-
 router.get('/images', async (req, res, next) => {
     const { query: { skip = 0, limit = 0 } } = req
 
