@@ -91,3 +91,4 @@ router.patch('/unfollow/:userToUnfollow', authorization, async (req, res, next) 
 })
 
 module.exports = router
+

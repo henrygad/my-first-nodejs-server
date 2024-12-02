@@ -4,42 +4,14 @@ const { customError } = require('../middlewares/error')
 const usersData = require('../schema/usersDataSchema')
 const router = require('express').Router()
 
-router.get('/stream/notification', authorization, async (req, res, next) => {
+router.get('/notifications', authorization, async (req, res, next) => {
     const { authorizeUser } = req
 
     try {
-        // set headers SSE live streaming
-        res.setHeader('Content-Type', 'text/event-stream')
-        res.setHeader('Cache-Control', 'no-cache')
-        res.setHeader('Connection', 'keep-alive')
-        res.flushHeaders() // send headers
+        const getUser = await usersData.findOne({ userName: authorizeUser }) // check if the user exist
+        if (!getUser) throw new Error('bad request: user not found') // throw error if user was not found
 
-        const watchStream = usersData.watch([ // wtach for changes made on the user document
-            { $match: { 'documentKey.userName': authorizeUser } }
-        ])
-
-        const sendData = (data) => {
-            res.write(`data: ${JSON.stringify(data)}\n\n`) // send streaming data 
-        }
-
-        watchStream.on('change', (change) => { // on change
-            if (change.operationType === 'update' && // check for updates made on the notificaion array, only
-                change.updateDescription.updateFields['notifications'] &&
-                change.updateDescription.updateFields['notifications'].$push
-            ) {
-                const data = change.updateDescription.updateFields['notifications'].$push // get the newly added notification
-                sendData(data) // send notification
-            }
-        })
-
-        watchStream.on('error', () => {
-            throw new Error('Stream error: an error occured while streaming')
-        })
-
-        req.on('close', () => { // if clien disconnect
-            watchStream.close() // close stream
-            res.end() // end streaming 
-        })
+        res.json({notifications: getUser.notifications}) // send notifications
 
     } catch (error) {
 

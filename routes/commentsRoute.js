@@ -172,7 +172,7 @@ router.delete('/deletecomment/:_id', authorization, async (req, res, next) => {
     }
 })
 
-router.get('/comment/like/:_id', authorization, async (req, res, next) => {
+router.get('/comment/like/:_id', async (req, res, next) => {
     const { params: { _id } } = req
 
     try {

@@ -51,7 +51,6 @@ router.get('/search', async (req, res, next) => {
         })
 
     } catch (error) {
-
         next(new customError(error, 404))
     }
 })

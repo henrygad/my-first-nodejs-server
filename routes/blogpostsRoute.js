@@ -99,7 +99,6 @@ router.get('/stream/changes/blogposts/timeline/:timeline', async (req, res, next
     const { params: { timeline }, query: { status = 'published', skip = 0, limit = 0 } } = req
 
     try {
-
         // set headers SSE live streaming
         res.setHeader('Content-Type', 'text/event-stream') // setup sse live connection to info client
         res.setHeader('Cache-Control', 'no-cache') // disable caching to ensure live data
@@ -118,7 +117,7 @@ router.get('/stream/changes/blogposts/timeline/:timeline', async (req, res, next
         const sendData = (data) => {
             res.write(`data: ${JSON.stringify(data)}\n\n`) // send streaming data 
         }
-
+        
         watchStream.on('change', (change) => { // on change
             if (change.operationType === 'insert') {
                 const data = change.fullDocument // get changes
@@ -221,7 +220,7 @@ router.post('/addblogpost',
             next(new customError(error, 400))
         }
     })
-    
+
 router.patch('/editblogpost/:_id',
     [body(['displayImage', 'title', 'body', 'catigory', 'status', '_html.title', '_html.body'])
         .optional()
@@ -277,7 +276,7 @@ router.delete('/deleteblogpost/:_id', authorization, async (req, res, next) => {
     }
 })
 
-router.get('/blogpost/like/:_id', authorization, async (req, res, next) => {
+router.get('/blogpost/like/:_id', async (req, res, next) => {
     const { params: { _id } } = req
 
     try {
@@ -285,9 +284,9 @@ router.get('/blogpost/like/:_id', authorization, async (req, res, next) => {
         if (!mongoose.Types.ObjectId.isValid(_id)) throw new Error('bad request: inavlid comment id') // verify comment id
 
         const getBlogpost = await blogpostsData.findById({ _id }) // get comment
-        if (!getBlogpost.likes) throw new Error('Bad Request: blogpost was not found!') // error if blogpost was not found
+        if (!getBlogpost.likes) throw new Error('Bad Request: likes not found!') // error if blogpost was not found
 
-        res.json(getBlogpost.likes)
+        res.json({ likes: getBlogpost.likes })
 
     } catch (error) {
 
@@ -340,7 +339,7 @@ router.patch('/unlikeblogpost/:_id', authorization, async (req, res, next) => {
     }
 })
 
-router.get('/blogpost/share/:_id', authorization, async (req, res, next) => {
+router.get('/blogpost/share/:_id', async (req, res, next) => {
     const { params: { _id } } = req
 
     try {
@@ -348,9 +347,9 @@ router.get('/blogpost/share/:_id', authorization, async (req, res, next) => {
         if (!mongoose.Types.ObjectId.isValid(_id)) throw new Error('bad request: inavlid comment id') // verify comment id
 
         const getBlogpost = await blogpostsData.findById({ _id }) // get comment
-        if (!getBlogpost.likes) throw new Error('Bad Request: blogpost was not found!') // error if blogpost was not found
+        if (!getBlogpost.shares) throw new Error('Bad Request: no shares found!') // error if blogpost was not found
 
-        res.json(getBlogpost.shares)
+        res.json({ shares: getBlogpost.shares });
 
     } catch (error) {
 
@@ -387,7 +386,7 @@ router.patch('/blogpost/share/:_id', async (req, res, next) => {
     }
 })
 
-router.get('/blogpost/view/:_id', authorization, async (req, res, next) => {
+router.get('/blogpost/view/:_id', async (req, res, next) => {
     const { params: { _id } } = req
 
     try {
@@ -395,9 +394,9 @@ router.get('/blogpost/view/:_id', authorization, async (req, res, next) => {
         if (!mongoose.Types.ObjectId.isValid(_id)) throw new Error('bad request: inavlid comment id') // verify comment id
 
         const getBlogpost = await blogpostsData.findById({ _id }) // get comment
-        if (!getBlogpost.likes) throw new Error('Bad Request: blogpost was not found!') // error if blogpost was not found
+        if (!getBlogpost.views) throw new Error('Bad Request: views was not found!') // error if blogpost was not found
 
-        res.json(getBlogpost.views)
+        res.json({ views: getBlogpost.views })
 
     } catch (error) {
 

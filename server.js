@@ -6,7 +6,8 @@ const MongoStore = require('connect-mongo')
 const routes = require('./routes/index')
 const session = require('express-session')
 const { errorHandler, customError } = require("./middlewares/error")
-const cors = require('cors')
+const cors = require('cors');
+const { Domain } = require('domain');
 require('dotenv').config()
 
 const app = express()
@@ -19,22 +20,23 @@ const NODE_ENV = process.env.NODE_ENV
 const oneHour = 3600000
 
 // Middlewares
-if (process.env.NODE_ENV === 'production') {
+if (NODE_ENV === 'production') {
     app.set('trust proxy', 1) // needed for sending secure cookies from host servers
-    
+
     app.use((req, res, next) => {
         if (req.headers['x-forwarded-proto'] !== 'https') { // if req headers is not https req
             return res.redirect(`https://${req.headers.host}${req.url}`) // redirect to https
         }
-    
+
         next() // continue if https
     })
 }
 
 app.use(cors({
-    origin: ['https://localhost:5173', 'https://localhost:4173'],
+    origin: ['https://blogsupapp.netlify.app', 'https://localhost:5173', 'https://localhost:4173'],
     credentials: true // send cookies to cross-orgin request resourse
 }))
+
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ limit: '10mb', extended: true }));
 
@@ -51,7 +53,7 @@ Mongoose.connect(DBURI) // connect DB
                 maxAge: (oneHour * 24 * 7), // live for 24hrs
                 httpOnly: true, // prevents client-side access for security
                 secure: true, // ensures cookies are sent over HTTPS
-                sameSite: 'None' // for cross-origin request (to sent cookies to a different domain)
+                sameSite: 'None', // for cross-origin request (to sent cookies to a different domain)
             },
             store: MongoStore.create({
                 client: Mongoose.connection.getClient() // save session to DB store
@@ -85,7 +87,7 @@ Mongoose.connect(DBURI) // connect DB
 
         if (NODE_ENV === 'production') {
             app.listen(PORT, () =>
-                console.log('serving running on a host server DNS' + ' ' + PORT)
+                console.log('serving running on a Host Server' + ' ' + PORT)
             )
         } else {
             const options = {
@@ -94,7 +96,7 @@ Mongoose.connect(DBURI) // connect DB
             };
 
             https.createServer(options, app).listen(PORT, () =>
-                console.log('Server running on LOCALHOST')
+                console.log('Server running on localhost' + ' ' + PORT)
             )
         }
 

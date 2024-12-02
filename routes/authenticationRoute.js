@@ -78,21 +78,58 @@ router.post('/signup',
             req.session.jwtToken = token // attach authentication  token to req property
             req.session.isLogin = req.session.jwtToken ? true : false // login user
 
-            const emailOTP = Math.floor(Math.random() * 10000) // generate new OPT Token
+            const emailOTP = Math.floor(Math.random() * 1000000) // generate a new OPT for email verification
 
             sendEmail({ // send an email verification OPT token to the user mail box
                 to: createNewUser.email, // recipient email
                 subject: 'OTP Email Verification', // email subject
                 // text: 'This is a test email sent using Nodemailer!', // plain text body
-                html: `<h1 style="color: green, font-weight: bold" >Blogger Logo</h1> 
-                 <div>
-                   <div style=" display: font-size:20px">Verify your email henrygad.orji@gmail.com</div>
-                   <div>Verification Token: ${emailOTP}</div>
-                 </div>`, // html body
+                html: ` <!DOCTYPE html>
+                        <html lang="en">
+                            <head>
+                                <meta charset="UTF-8">
+                                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                                <title>OTP Email Verification</title>
+                            </head>
+                            <body>                               
+                                <table>
+                                <tr align="center" style="width: 100% ;" >
+                                    <td align="center" style=" width: 100% ; display: flex; gap: 10px ; weight: 100%; margin-bottom: 20px">
+                                        <img
+                                            src="https://blogsupserver.onrender.com/api/image/674d4d8b016509caf158ca4c" 
+                                            alt="blogup" 
+                                            style="width: 80px; height: 80px; object-position: cover;" 
+                                        />
+                                        <p style="color: #16a34a; font-size: 24px; font-weight: bold;">Blogpsup</p>
+                                    </td>
+                                </tr>
+                                <tr align="center" style="width: 100% ;">
+                                    <td align="center" style="width: 100% ; margin-bottom: 20px;" > 
+                                        <p style="font-size: 30px;" >Hi ${createNewUser.userName.slice(1, createNewUser.userName.length)}</p>
+                                    </td>    
+                                </tr>
+                                <tr>
+                                  <td>
+                                    <p style="font-size: 18px;"> 
+                                        <p style="font-weight: bold;" >Email</p> ${createNewUser.email}
+                                    </p>
+                                    <p style="font-size: 18px; font-weight: bold; ">
+                                        <P style="font-weight: bold;" > Email verification OTP token:</p> ${emailOTP}
+                                    </p>
+                                  </td>
+                                </tr>
+                                <tr>
+                                    <td align="center" style="margin-bottom: 20px;" > 
+                                        <p style=" font-size: 14px; martin-top: 10px;" >Token will expire after 1 hour</p>
+                                    </td>  
+                                </tr>                               
+                                </table>                             
+                            </body>
+                        </html>`, 
             })
 
             req.session.emailVerificationToken = null // clear up any avaliable email verification OTP token
-            const jwtEmailOTPToken = jwt.sign({ emailOTP }, SECRETE, { expiresIn: '24h' }) // assign new one
+            const jwtEmailOTPToken = jwt.sign({ emailOTP }, SECRETE, { expiresIn: '1h' }) // assign new one
             req.session.emailVerificationToken = jwtEmailOTPToken //  attached the new email verification OTP token to the req session object
 
             const isLogin = req.session.isLogin
@@ -108,7 +145,7 @@ router.post('/signup',
 
             next(new customError(error, 500))
         }
-})
+    })
 
 router.post('/login',
     [
@@ -151,7 +188,7 @@ router.post('/login',
 
             next(new customError(error, 400))
         }
-})
+    })
 
 router.post('/logout', authorization, async (req, res, next) => {
     const { authorizeUser, session } = req
@@ -235,7 +272,7 @@ router.post('/verifyemail',
 
             next(new customError(error, 400))
         }
-})
+    })
 
 router.patch('/changeforgetpassword/:jwtTokenFor30min', async (req, res, next) => {
     const { params: { jwtTonkenFor30min } } = req
@@ -259,6 +296,5 @@ router.patch('/changeforgetpassword/:jwtTokenFor30min', async (req, res, next) =
         next(new customError(error, 400))
     }
 })
-
 
 module.exports = router
