@@ -96,7 +96,7 @@ Mongoose.connect(DBURI) // connect DB
             };
 
             https.createServer(options, app).listen(PORT, () =>
-                console.log('Server running on localhost' + ' ' + PORT)
+                console.log('Server running on Localhost' + ' ' + PORT)
             )
         }
 

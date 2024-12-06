@@ -19,7 +19,7 @@ router.get('/notifications', authorization, async (req, res, next) => {
     }
 })
 
-router.patch('/notification/:userToNotify', authorization, async (req, res, next) => {
+router.patch('/notification/:userToNotify', async (req, res, next) => {
     const { params: { userToNotify }, body } = req
 
     try {

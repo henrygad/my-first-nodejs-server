@@ -65,6 +65,11 @@ router.patch('/unfollow/:userToUnfollow', authorization, async (req, res, next) 
         // check if it is a valid username
         if (!userToUnfollow.startsWith('@')) throw new Error('Bad request: empty fields or invalid userName')
 
+        // unfollow from the login user
+        await usersData.findOneAndUpdate({ userName: authorizeUser },
+            { $pull: { following: userToUnfollow, timeline: userToUnfollow } },
+            { new: true })
+
         // check if user exist
         const getUser = await usersData.findOne({ userName: userToUnfollow })
         if (!getUser) throw new Error('Bad request: this user was not found')
@@ -74,12 +79,8 @@ router.patch('/unfollow/:userToUnfollow', authorization, async (req, res, next) 
             { $pull: { followers: authorizeUser } },
             { new: true }
         )
-        if (!unFollowed.followers) throw new Error('Bad request: user not followed')
 
-        // delete the user to unfollow from the login user following 
-        await usersData.findOneAndUpdate({ userName: authorizeUser },
-            { $pull: { following: unFollowed.userName, timeline: unFollowed.userName } },
-            { new: true })
+        if (!unFollowed.followers) throw new Error('Bad request: user not followed')
 
         res.json({ unFollowed: userToUnfollow })
 
